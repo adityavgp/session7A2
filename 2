@@ -1,0 +1,37 @@
+1.
+
+A = LOAD '/home/acadgild/employee_details.txt' using PigStorage(','); 
+B = ORDER A by $3 DESC,$1 ASC;
+C = LIMIT B 5;   
+D = FOREACH C GENERATE $0 as employeeid,$1 as employeename,$3 as rate;
+
+
+2.
+A = LOAD '/home/acadgild/employee_details.txt' using PigStorage(',') as (empid:INT,empname:chararray,salary:INT,rating:INT);
+B = FILTER A BY (int)empid%2==1; 
+C = ORDER B by salary DESC,empname ASC;
+D = LIMIT C 3;  
+E = FOREACH D GENERATE empid,empname,salary;
+dump E;
+
+3.
+A = LOAD '/home/acadgild/employee_details.txt' using PigStorage(',') as (empid:INT,empname:chararray,salary:INT,rating:INT);
+B = LOAD '/home/acadgild/employee_expenses.txt' using PigStorage('    ') as (empid:INT,expense:INT);
+C = JOIN A BY empid,B BY empid;  
+D = ORDER C by expense DESC,empname ASC;  
+E = LIMIT D 1;
+F = FOREACH E GENERATE empname,expense;
+dump F;  
+
+4.
+A = LOAD '/home/acadgild/employee_details.txt' using PigStorage(',') as (empid:INT,empname:chararray,salary:INT,rating:INT);
+B = LOAD '/home/acadgild/employee_expenses.txt' using PigStorage('    ') as (empid:INT,expense:INT);
+C = JOIN A BY empid,B BY empid;  
+dump C;
+
+5.     
+A = LOAD '/home/acadgild/employee_details.txt' using PigStorage(',') as (empid:INT,empname:chararray,salary:INT,rating:INT);
+B = LOAD '/home/acadgild/employee_expenses.txt' using PigStorage('    ') as (empid:INT,expense:INT);
+C = JOIN A BY empid LEFT OUTER,B BY empid;
+D = FILTER C by B::empid is NULL;
+dump D;
